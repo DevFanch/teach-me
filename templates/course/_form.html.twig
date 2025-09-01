@@ -1,0 +1,122 @@
+<div
+	class="max-w-3xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden">
+	<!-- En-tête du formulaire -->
+	<div class="bg-gradient-to-r from-blue-600 to-indigo-800 px-6 py-4">
+		<h2 class="text-xl font-bold text-white">
+			{{ button_label|default('Ajouter un nouveau cours') }}
+		</h2>
+		<p class="mt-1 text-blue-100 text-sm">
+			Remplissez les informations ci-dessous pour créer ou modifier un cours.
+		</p>
+	</div>
+
+	<!-- Corps du formulaire -->
+	<div class="p-6">
+		{{ form_start(form) }}
+
+		<div
+			class="space-y-6">
+			<!-- Nom du cours -->
+			<div>
+				{{ form_label(form.name, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+				{{ form_widget(form.name, {'attr': {'class': 'w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
+				<div class="text-red-500 text-sm mt-1">
+					{{ form_errors(form.name) }}
+				</div>
+			</div>
+
+			<!-- Contenu du cours -->
+			<div>
+				{{ form_label(form.content, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+				{{ form_widget(form.content, {'attr': {'class': 'w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-32'}}) }}
+				<div class="text-red-500 text-sm mt-1">
+					{{ form_errors(form.content) }}
+				</div>
+			</div>
+
+			<!-- Durée du cours -->
+			<div>
+				{{ form_label(form.duration, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+				{{ form_widget(form.duration, {'attr': {'class': 'w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
+				<div class="text-red-500 text-sm mt-1">
+					{{ form_errors(form.duration) }}
+				</div>
+			</div>
+
+			<!-- Catégorie du cours (liste déroulante) -->
+			<div class="mb-4">
+				{{ form_label(form.category, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-800 mb-1'}}) }}
+				{{ form_widget(form.category, {
+					'attr': {
+						'class': 'w-full rounded-md border-gray-300 bg-white py-2 pl-3 pr-10 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm appearance-none cursor-pointer'
+					}
+				}) }}
+				{{ form_errors(form.category, {'attr': {'class': 'text-red-500 text-sm mt-1'}}) }}
+			</div>
+
+			<!-- Formateurs du cours (liste multi-sélection) -->
+			<div class="mb-4">
+				{{ form_label(form.trainer, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-800 mb-1'}}) }}
+				{{ form_widget(form.trainer, {
+					'attr': {
+						'class': 'w-full rounded-md border-gray-300 bg-white py-2 pl-3 pr-3 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm',
+						'size': '5',
+						'style': 'height: auto; min-height: 120px;'
+					}
+				}) }}
+				<p class="mt-1 text-xs text-gray-500">Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs formateurs</p>
+				{{ form_errors(form.trainer, {'attr': {'class': 'text-red-500 text-sm mt-1'}}) }}
+			</div>
+
+			<!-- Statut publié -->
+			<div class="flex items-start">
+				<div class="flex items-center h-5">
+					{{ form_widget(form.published, {'attr': {'class': 'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'}}) }}
+				</div>
+				<div class="ml-3 text-sm">
+					{{ form_label(form.published, null, {'label_attr': {'class': 'font-medium text-gray-700'}}) }}
+					<div class="text-red-500 text-sm mt-1">
+						{{ form_errors(form.published) }}
+					</div>
+				</div>
+			</div>
+
+			<!-- Boutons d'action -->
+			<div
+				class="pt-4 flex justify-between items-center border-t border-gray-200 mt-6">
+				<!-- Liens de navigation -->
+				<div>
+					<a href="{{ path('app_course_index') }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+						<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+						</svg>
+						Retour à la liste
+					</a>
+				</div>
+
+				<!-- Boutons de soumission -->
+				<div class="space-x-3">
+					<a href="{{ path('app_course_index') }}" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+						Annuler
+					</a>
+					{{ form_widget(form.submit, {'attr': {'class': 'inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'}}) }}
+				</div>
+			</div>
+		</div>
+
+		<!-- Champs cachés et autres widgets non spécifiés explicitement -->
+		{% for field in form %}
+			{% if not field.rendered %}
+				<div class="mt-4">
+					{{ form_label(field, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
+					{{ form_widget(field, {'attr': {'class': 'w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}}) }}
+					<div class="text-red-500 text-sm mt-1">
+						{{ form_errors(field) }}
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+
+		{{ form_end(form) }}
+	</div>
+</div>
