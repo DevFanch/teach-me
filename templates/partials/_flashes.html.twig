@@ -1,0 +1,17 @@
+{% for label, messages in app.flashes %}
+	{% if label is same as 'error' %}
+		{% set style = 'bg-red-100 border border-red-400 text-red-800' %}
+	{% elseif label is same as 'success' %}
+		{% set style = 'bg-green-100 border border-green-400 text-green-800' %}
+	{% elseif label is same as 'warning' %}
+		{% set style = 'bg-yellow-100 border border-yellow-400 text-yellow-800' %}
+	{% elseif label is same as 'info' %}
+		{% set style = 'bg-blue-100 border border-blue-400 text-blue-800' %}
+	{% endif %}
+
+	{% for message in messages %}
+		<div id="notif" class="border-t border-b px-4 py-3 {{ style }}">
+			{{ message }}
+		</div>
+	{% endfor %}
+{% endfor %}

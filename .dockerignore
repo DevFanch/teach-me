@@ -1,0 +1,36 @@
+# Ignore files not needed in Docker image
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+compose.yaml
+compose.override.yaml
+
+# Development files
+.env.local
+.env.docker
+
+# Symfony cache and logs
+/var/*
+!/var/cache
+/var/cache/*
+!/var/cache/.gitkeep
+!/var/log
+/var/log/*
+!/var/log/.gitkeep
+
+# Node modules and build artifacts
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

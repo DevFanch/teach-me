@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/course', name: 'app_course_')]
+#[Route('/', name: 'app_course_')]
 final class CourseController extends AbstractController
 {
     #[Route(name: 'index', methods: ['GET'])]
@@ -44,23 +44,15 @@ final class CourseController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Vérifier si l'utilisateur est authorisé à créer un cours via le voter
-        // if (!$this->isGranted('COURSE_CREATE', null)) {
-        //     throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à créer un cours');
-        // }
-
         $course = new Course();
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($course);
             $entityManager->persist($course);
-            dump($course);
 
             // ne pas oublier le flush() sinon l'objet ne sera pas persisté en base.
             $entityManager->flush();
-            dump($course);
 
             $this->addFlash('success', 'Le cours a été créé avec succès');
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
@@ -90,11 +82,6 @@ final class CourseController extends AbstractController
     // public function edit(Request $request, Course $course, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     public function edit(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
-        // Vérifier si l'utilisateur est authorisé à modifier un cours via le voter
-        // if (!$this->isGranted('COURSE_EDIT', $course)) {
-        //     throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier ce cours');
-        // }
-
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
@@ -131,11 +118,6 @@ final class CourseController extends AbstractController
     )]
     public function delete(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
-        // Vérifier si l'utilisateur est authorisé à supprimer un cours via le voter
-        if (!$this->isGranted('COURSE_DELETE', $course)) {
-            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer ce cours');
-        }
-
         // on vérifie si le cours existe
         if (!$course) {
             // on affiche une erreur 404
