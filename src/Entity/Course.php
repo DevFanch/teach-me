@@ -7,11 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['name'])]
 class Course
 {
     #[ORM\Id]
@@ -19,53 +18,59 @@ class Course
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'courses')]
-    private ?Category $category = null;
-
-    #[ORM\Column(length: 255, name: 'libelle', unique: true)]
+    #[Assert\NotBlank(message: 'Le nom du cours est obligatoire')]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le nom du cours doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le nom du cours doit contenir au plus {{ limit }} caractères'
+    )]
+    #[ORM\Column(name: 'libelle', length: 255)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
+    // #[Assert\Range(
+    //     min: 1, max: 1000,
+    //     minMessage: 'La durée du cours doit être comprise entre {{ min }} et {{ max }} heures',
+    //     maxMessage: 'La durée du cours doit être comprise entre {{ min }} et {{ max }} heures')]
+    // #[Assert\Positive(message: 'La durée du cours doit être positive')]
+    #[Assert\GreaterThan(value: 0, message: 'La durée du cours doit être supérieure à {{ compared_value }} heures')]
+    #[Assert\NotBlank(message: 'La durée du cours est obligatoire')]
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $duration = null;
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private ?bool $published = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'courses')]
+    private ?Category $category = null;
 
     /**
      * @var Collection<int, Trainer>
      */
     #[ORM\ManyToMany(targetEntity: Trainer::class, inversedBy: 'courses')]
-    private Collection $trainers;
+    private Collection $trainer;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->published = false;
-        $this->trainers = new ArrayCollection();
+        /**
+         * @var Collection<int, Trainer>
+         */
+        $this->trainer = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): static
-    {
-        $this->category = $category;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -122,9 +127,14 @@ class Course
     }
 
     #[ORM\PrePersist]
-    public function setCreatedAt(): static
+    public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTimeImmutable;
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -134,9 +144,22 @@ class Course
         return $this->modifiedAt;
     }
 
-    public function setModifiedAt(?\DateTimeImmutable $modifiedAt): static
+    #[ORM\PreUpdate]
+    public function setModifiedAt(): static
     {
-        $this->modifiedAt = $modifiedAt;
+        $this->modifiedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
@@ -144,15 +167,15 @@ class Course
     /**
      * @return Collection<int, Trainer>
      */
-    public function getTrainers(): Collection
+    public function getTrainer(): Collection
     {
-        return $this->trainers;
+        return $this->trainer;
     }
 
     public function addTrainer(Trainer $trainer): static
     {
-        if (!$this->trainers->contains($trainer)) {
-            $this->trainers->add($trainer);
+        if (!$this->trainer->contains($trainer)) {
+            $this->trainer->add($trainer);
         }
 
         return $this;
@@ -160,7 +183,7 @@ class Course
 
     public function removeTrainer(Trainer $trainer): static
     {
-        $this->trainers->removeElement($trainer);
+        $this->trainer->removeElement($trainer);
 
         return $this;
     }

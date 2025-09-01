@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\CategoryRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[UniqueEntity(fields: ['name',], message: 'Cette catégorie existe déja')]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['name'])]
 class Category
 {
     #[ORM\Id]
@@ -19,28 +19,33 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank(message: 'Le nom est obligatoire !')]
-    #[Assert\Length(min: 3, max: 30,
-        minMessage: 'Un nom doit comporter au moins {{ limit }} caractères',
-        maxMessage: 'Un nom doit pas dépasser {{ limit }} caractères'
+    #[Assert\NotBlank(message: 'Le nom de la catégorie est obligatoire')]
+    #[Assert\Length(
+        min: 3,
+        max: 40,
+        minMessage: 'Le nom de la catégorie doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le nom de la catégorie doit contenir au plus {{ limit }} caractères'
     )]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
 
     /**
      * @var Collection<int, Course>
      */
-    #[ORM\OneToMany(targetEntity: Course::class, mappedBy: 'category')]
+    #[ORM\OneToMany(targetEntity: Course::class, mappedBy: 'category', cascade: ['remove'])]
     private Collection $courses;
 
     public function __construct()
     {
+        /**
+         * @var Collection<int, Course>
+         */
         $this->courses = new ArrayCollection();
     }
 
@@ -69,7 +74,7 @@ class Category
     #[ORM\PrePersist]
     public function setCreatedAt(): static
     {
-        $this->createdAt = new \DateTimeImmutable;
+        $this->createdAt = new \DateTimeImmutable();
 
         return $this;
     }
@@ -79,9 +84,10 @@ class Category
         return $this->modifiedAt;
     }
 
-    public function setModifiedAt(?\DateTimeImmutable $modifiedAt): static
+    #[ORM\PreUpdate]
+    public function setModifiedAt(): static
     {
-        $this->modifiedAt = $modifiedAt;
+        $this->modifiedAt = new \DateTimeImmutable();
 
         return $this;
     }

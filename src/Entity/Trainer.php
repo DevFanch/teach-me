@@ -6,12 +6,12 @@ use App\Repository\TrainerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: TrainerRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['firstname', 'lastname'], message: 'There is already a trainer with this name')]
+#[UniqueEntity(fields: ['firstname', 'lastname'])]
 class Trainer
 {
     #[ORM\Id]
@@ -19,30 +19,43 @@ class Trainer
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: 'Le prénom du formateur est obligatoire')]
+    #[Assert\Length(
+        min: 3,
+        max: 40,
+        minMessage: 'Le prénom du formateur doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le prénom du formateur doit contenir au plus {{ limit }} caractères'
+    )]
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Please enter your first name')]
-    #[Assert\Length(min: 2, max: 255)]
     private ?string $firstname = null;
 
+    #[Assert\NotBlank(message: 'Le nom du formateur est obligatoire')]
+    #[Assert\Length(
+        min: 3,
+        max: 40,
+        minMessage: 'Le nom du formateur doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le nom du formateur doit contenir au plus {{ limit }} caractères'
+    )]
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Please enter your last name')]
-    #[Assert\Length(min: 2, max: 255)]
     private ?string $lastname = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
 
     /**
      * @var Collection<int, Course>
      */
-    #[ORM\ManyToMany(targetEntity: Course::class, mappedBy: 'trainers')]
+    #[ORM\ManyToMany(targetEntity: Course::class, mappedBy: 'trainer')]
     private Collection $courses;
 
     public function __construct()
     {
+        /**
+         * @var Collection<int, Course>
+         */
         $this->courses = new ArrayCollection();
     }
 
@@ -75,18 +88,6 @@ class Trainer
         return $this;
     }
 
-    public function getModifiedAt(): ?\DateTimeImmutable
-    {
-        return $this->modifiedAt;
-    }
-
-    public function setModifiedAt(?\DateTimeImmutable $modifiedAt): static
-    {
-        $this->modifiedAt = $modifiedAt;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -95,7 +96,20 @@ class Trainer
     #[ORM\PrePersist]
     public function setCreatedAt(): static
     {
-        $this->createdAt = new \DateTimeImmutable;
+        $this->createdAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getModifiedAt(): ?\DateTimeImmutable
+    {
+        return $this->modifiedAt;
+    }
+
+    #[ORM\PreUpdate]
+    public function setModifiedAt(): static
+    {
+        $this->modifiedAt = new \DateTimeImmutable();
 
         return $this;
     }
@@ -125,5 +139,10 @@ class Trainer
         }
 
         return $this;
+    }
+
+    public function fullName(): string
+    {
+        return $this->lastname . ' ' . $this->firstname;
     }
 }

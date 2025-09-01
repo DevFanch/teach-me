@@ -2,30 +2,39 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use App\Entity\Category;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
 class CategoryFixtures extends Fixture
 {
+    public const CATEGORY_REFERENCE_PREFIX = 'category-';
+    public const CATEGORIES = [
+        'Symfony',
+        'PHP',
+        'Apache',
+        'Linux',
+        'Javascript',
+        'Python',
+        'Java',
+        'Systeme & réseaux',
+        'Base de données',
+        'DevOps',
+        'Cloud',
+        'Cybersécurité',
+    ];
+
     public function load(ObjectManager $manager): void
     {
-        $category = new Category();
-        $category->setName('Développement');
-        $manager->persist($category);
-        $this->addReference('category-dev', $category);
+        foreach (self::CATEGORIES as $key => $categoryName) {
+            $category = new Category();
+            $category->setName($categoryName);
+            $manager->persist($category);
 
-        $category2 = new Category();
-        $category2->setName('Système & Réseaux');
-        $manager->persist($category2);
-        $this->addReference('category-sys', $category2);
+            // on ajoute une référence à la catégorie
+            $this->addReference(self::CATEGORY_REFERENCE_PREFIX . $key, $category);
+        }
 
         $manager->flush();
-        // Création des références
     }
-
-    // public static function getGroups(): array {
-    //     return ['group1'];
-    // }
 }

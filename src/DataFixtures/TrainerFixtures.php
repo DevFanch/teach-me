@@ -4,50 +4,49 @@ namespace App\DataFixtures;
 
 use App\Entity\Trainer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class TrainerFixtures extends Fixture
+class TrainerFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const TRAINER_REFERENCE_PREFIX = 'trainer-';
+    public const TRAINERS = [
+        ['Bart', 'Simpson'],
+        ['Lisa', 'Simpson'],
+        ['Maggie', 'Simpson'],
+        ['Homer', 'Simpson'],
+        ['Marge', 'Simpson'],
+        ['Ned', 'Flanders'],
+        ['Krusty', 'the Clown'],
+        ['Milhouse', 'Van Houten'],
+        ['Edna', 'Krabappel'],
+        ['Apu', 'Nahasapeemapetilon'],
+        ['Moe', 'Szyslak'],
+        ['Lenny', 'Leonard'],
+        ['Montgomery', 'Burns'],
+        ['Seymour', 'Skinner'],
+    ];
+
     public function load(ObjectManager $manager): void
     {
-        $faker = \Faker\Factory::create('fr_FR');
+        foreach (self::TRAINERS as $index => $trainerData) {
+            $trainer = new Trainer();
+            $trainer->setFirstName($trainerData[0]);
+            $trainer->setLastName($trainerData[1]);
+            $manager->persist($trainer);
 
-        // for ($i = 1; $i <= 10; $i++) {
-        //     $trainer = new Trainer();
-        //     $trainer->setFirstname($faker->firstNameMale());
-        //     $trainer->setLastname($faker->lastName());
-        //     $manager->persist($trainer);
-
-        //     $this->addReference('trainer-' . $i, $trainer);
-        // }
-
-        $trainer = new Trainer();
-        $trainer->setFirstname($faker->firstNameMale());
-        $trainer->setLastname($faker->lastName());
-        $manager->persist($trainer);
-
-        $this->addReference('trainer-1', $trainer);
-
-        $trainer2 = new Trainer();
-        $trainer2->setFirstname($faker->firstNameMale());
-        $trainer2->setLastname($faker->lastName());
-        $manager->persist($trainer2);
-
-        $this->addReference('trainer-2', $trainer2);
-
-        $trainer3 = new Trainer();
-        $trainer3->setFirstname($faker->firstNameMale());
-        $trainer3->setLastname($faker->lastName());
-        $manager->persist($trainer3);
-        
-        $this->addReference('trainer-3', $trainer3);
+            $this->addReference(self::TRAINER_REFERENCE_PREFIX . $index, $trainer);
+            // debug
+            // echo "Ajout de la référence " . self::TRAINER_REFERENCE_PREFIX . $index . "\n";
+        }
 
         $manager->flush();
     }
 
-    // public static function getGroups(): array
-    // {
-    //     return ['group1'];
-    // }
+    public function getDependencies(): array
+    {
+        return [
+            CategoryFixtures::class,
+        ];
+    }
 }
