@@ -39,6 +39,19 @@ class CourseType extends AbstractType
                 'label' => 'Catégorie',
                 'placeholder' => '--Choisissez une catégorie--',
             ])
+            ->add('trainer', EntityType::class, [
+                'class' => Trainer::class,
+                'choice_label' => 'fullName',
+                'label' => 'Formateurs',
+                'placeholder' => '--Choisissez un formateur--',
+                'multiple' => true,
+                'required' => false,
+                'query_builder' => function (TrainerRepository $trainerRepository) {
+                    return $trainerRepository->createQueryBuilder('t')
+                        ->orderBy('t.lastname', 'ASC')
+                        ->addOrderBy('t.firstname', 'ASC');
+                },
+            ])
             ->add('duration', IntegerType::class, [
                 'label' => 'Durée du cours',
                 'attr' => [
