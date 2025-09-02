@@ -1,20 +1,53 @@
-
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+  web:
+    build: .
+    container_name: teach-me_app
+    ports:
+      - "8000:80"
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - ./:/var/www/html
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: 1
+    env_file:
+      - ./.env.local
+    depends_on:
+      - database
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  database:
+    image: mysql:8.3
+    container_name: teach-me_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: teach-me_db
+      MYSQL_USER: teach-me_user
+      MYSQL_PASSWORD: teach-me_pwd
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - teach-me_db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: teach-me_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - database
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: teach-me_mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+  teach-me_db_data:
