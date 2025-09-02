@@ -10,8 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/', name: 'app_course_')]
+#[Route('/course', name: 'app_course_')]
 final class CourseController extends AbstractController
 {
     #[Route(name: 'index', methods: ['GET'])]
@@ -26,6 +27,10 @@ final class CourseController extends AbstractController
          * 4. findBy([], ['createdAt' => 'DESC'], 5)
          * 5. findAll()
          */
+        // Vérifier si l'utilisateur est authorisé à créer un cours via le voter
+        if (!$this->isGranted('ROLE_USER', null)) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à créer un cours');
+        }
 
         // Récupérer la page et le nombre de cours par page
         $page = $request->query->getInt('page', 1);
@@ -79,6 +84,7 @@ final class CourseController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted("ROLE_PLANNER")]
     // public function edit(Request $request, Course $course, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     public function edit(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
@@ -118,6 +124,12 @@ final class CourseController extends AbstractController
     )]
     public function delete(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
+
+        // Vérifier si l'utilisateur est authorisé à créer un cours via le voter
+        if (!$this->isGranted('ROLE_ADMIN', null)) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer un cours');
+        }
+
         // on vérifie si le cours existe
         if (!$course) {
             // on affiche une erreur 404

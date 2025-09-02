@@ -19,6 +19,7 @@ class AppFixtures extends Fixture
             CategoryFixtures::class,
             TrainerFixtures::class,
             CourseFixtures::class,
+            UserFixtures::class
         ];
     }
 }

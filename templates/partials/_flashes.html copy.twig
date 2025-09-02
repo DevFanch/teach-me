@@ -1,0 +1,33 @@
+<!-- Affichage des notifications flash avec Tailwind -->
+<div id="flash-container" class="fixed top-4 right-0 left-0 mx-auto w-full max-w-md z-50 flex flex-col items-center">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-message {% if label == 'success' %}bg-green-500{% elseif label == 'error' %}bg-red-500{% elseif label == 'warning' %}bg-yellow-500{% elseif label == 'info' %}bg-blue-500{% else %}bg-gray-500{% endif %} text-white px-4 py-3 rounded-md shadow-md mb-2 w-full transform transition-all duration-300 ease-in-out">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<script>
+    // document.addEventListener('DOMContentLoaded', function() {
+    // (function() {
+
+    //     // debug
+    //     const $flashContainer = document.getElementById('flash-container');
+    //     const $flashMessages = $flashContainer.querySelectorAll('.flash-message');
+    //     // debug
+    //     $flashMessages.forEach(function($message) {
+    //         // Attendre 2 secondes puis faire disparaître le message
+    //         setTimeout(function() {
+    //             $message.style.opacity = '0';
+    //             $message.style.transform = 'translateY(-20px)';
+                
+    //             // Supprimer le message du DOM après l'animation
+    //             setTimeout(function() {
+    //                 $message.remove();
+    //             }, 300);
+    //         }, 2000);
+    //     });
+    // })();
+</script>
