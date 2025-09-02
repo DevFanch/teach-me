@@ -31,11 +31,6 @@ class Course
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    // #[Assert\Range(
-    //     min: 1, max: 1000,
-    //     minMessage: 'La durée du cours doit être comprise entre {{ min }} et {{ max }} heures',
-    //     maxMessage: 'La durée du cours doit être comprise entre {{ min }} et {{ max }} heures')]
-    // #[Assert\Positive(message: 'La durée du cours doit être positive')]
     #[Assert\GreaterThan(value: 0, message: 'La durée du cours doit être supérieure à {{ compared_value }} heures')]
     #[Assert\NotBlank(message: 'La durée du cours est obligatoire')]
     #[ORM\Column(type: Types::SMALLINT)]
