@@ -37,6 +37,13 @@
         {{ include('course/_form.html.twig', {'button_label': 'Update'}) }}
 	</div>
 </div>
-{# 
-    {{ include('course/_delete_form.html.twig') }} #}
+    {# {{ include('course/_delete_form.html.twig') }} #}
+{% if is_granted('COURSE_DELETE', course) %}
+	<a href="{{ path('app_course_delete', {'id': course.id, 'token' : csrf_token('delete'~course.id)}) }}" title="Supprimer le cours">
+		Supprimer
+	</a>
+{% endif %}
+
+
+
 {% endblock %}

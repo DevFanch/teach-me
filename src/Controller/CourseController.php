@@ -122,13 +122,13 @@ final class CourseController extends AbstractController
         requirements: ['id' => '\d+', '_token' => '[a-zA-Z0-9_\-\.]+'],
         methods: ['GET']
     )]
+    #[IsGranted("COURSE_DELETE", "course", message: 'Vous n\'êtes pas autorisé à supprimer ce cours')]
     public function delete(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
-
-        // Vérifier si l'utilisateur est authorisé à créer un cours via le voter
-        if (!$this->isGranted('ROLE_ADMIN', null)) {
-            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer un cours');
-        }
+        // Vérifier si l'utilisateur est authorisé à créer un cours via le Security d'access control (voter:COURSE_DELETE)
+        // if (!$this->isGranted('ROLE_ADMIN', null)) {
+        //     throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer un cours');
+        // }
 
         // on vérifie si le cours existe
         if (!$course) {
