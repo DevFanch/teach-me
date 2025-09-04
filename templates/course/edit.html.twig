@@ -1,49 +1,58 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.html.twig' %} {% block title %}Edit Course{% endblock %} {%
+block body %}
+<div class="relative bg-gradient-to-r from-blue-600 to-indigo-800">
+  <!-- Overlay de motif en arrière-plan -->
+  <div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
 
-{% block title %}Edit Course{% endblock %}
+  <!-- Entête de la page -->
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <div class="text-center md:text-left">
+      <div class="flex items-center justify-center md:justify-start mb-4">
+        <a
+          href="{{ path('app_course_index') }}"
+          class="text-blue-200 hover:text-white flex items-center"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewbox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            ></path>
+          </svg>
+          Retour aux cours
+        </a>
+      </div>
 
-{% block body %}
-<div
-	class="relative bg-gradient-to-r from-blue-600 to-indigo-800">
-	<!-- Overlay de motif en arrière-plan -->
-	<div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-
-	<!-- Entête de la page -->
-	<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-		<div class="text-center md:text-left">
-			<div class="flex items-center justify-center md:justify-start mb-4">
-				<a href="{{ path('app_course_index') }}" class="text-blue-200 hover:text-white flex items-center">
-					<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-					</svg>
-					Retour aux cours
-				</a>
-			</div>
-
-			<h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
-				<span class="block">Modifier un cours</span>
-				<span class="block text-blue-200">Partagez votre savoir</span>
-			</h1>
-			<p class="mt-4 text-lg text-blue-100 max-w-3xl">
-				Modifier un cours existant.
-			</p>
-		</div>
-	</div>
+      <h1
+        class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl"
+      >
+        <span class="block">Modifier un cours</span>
+        <span class="block text-blue-200">Partagez votre savoir</span>
+      </h1>
+      <p class="mt-4 text-lg text-blue-100 max-w-3xl">
+        Modifier un cours existant.
+      </p>
+    </div>
+  </div>
 </div>
 
 <!-- Contenu du formulaire -->
 <div class="py-12 bg-white">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{ include('course/_form.html.twig', {'button_label': 'Update'}) }}
-	</div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {{
+      include("course/_form.html.twig", {
+        button_label: "Update",
+        show_delete: true,
+        course: course
+      })
+    }}
+  </div>
 </div>
-    {# {{ include('course/_delete_form.html.twig') }} #}
-{% if is_granted('COURSE_DELETE', course) %}
-	<a href="{{ path('app_course_delete', {'id': course.id, 'token' : csrf_token('delete'~course.id)}) }}" title="Supprimer le cours">
-		Supprimer
-	</a>
-{% endif %}
-
-
 
 {% endblock %}

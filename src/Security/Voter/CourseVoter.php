@@ -35,38 +35,25 @@ final class CourseVoter extends Voter
         }
 
         // ... (check conditions and return true to grant permission) ...
-        switch ($attribute) {
-            case self::EDIT:
-                // logic to determine if the user can EDIT
-                $this->canEdit($subject, $user);
-                // return true or false
-                break;
-
-            case self::VIEW:
-                // logic to determine if the user can VIEW
-                $this->canView();
-                // return true or false
-                break;
-
-            case self::DELETE:
-                // logic to determine if the user can DELETE
-                $this->canDelete();
-                // return true or false
-                break;
-        }
-
-        return false;
+        return match($attribute) {
+            self::EDIT => $this->canEdit($subject, $user),
+            self::VIEW => $this->canView(),
+            self::DELETE => $this->canDelete($subject, $user),
+            default => false
+        };
     }
 
     private function canEdit(Course $course, UserInterface $user): bool
     {
-        return $this->security->isGranted('ROLE_ADMIN') || $course->getAuthor() === $user;
+        return $this->security->isGranted('ROLE_ADMIN') || $course->getOwner() === $user;
     }
+    
     private function canView(): bool
     {
-        return $this->security->isGranted('PUBLIC_ACCESS');
+        return true; // Les cours sont visibles par tous
     }
-    private function canDelete(): bool
+    
+    private function canDelete(Course $course, UserInterface $user): bool
     {
         return $this->security->isGranted('ROLE_ADMIN');
     }

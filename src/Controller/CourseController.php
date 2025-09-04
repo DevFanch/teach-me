@@ -117,35 +117,24 @@ final class CourseController extends AbstractController
     }
 
     #[Route(
-        '/{id}/delete/{_token}',
+        '/{id}/delete',
         name: 'delete',
-        requirements: ['id' => '\d+', '_token' => '[a-zA-Z0-9_\-\.]+'],
-        methods: ['GET']
+        requirements: ['id' => '\d+'],
+        methods: ['POST']
     )]
     #[IsGranted("COURSE_DELETE", "course", message: 'Vous n\'êtes pas autorisé à supprimer ce cours')]
     public function delete(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
-        // Vérifier si l'utilisateur est authorisé à créer un cours via le Security d'access control (voter:COURSE_DELETE)
-        // if (!$this->isGranted('ROLE_ADMIN', null)) {
-        //     throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer un cours');
-        // }
-
         // on vérifie si le cours existe
         if (!$course) {
             // on affiche une erreur 404
             throw $this->createNotFoundException('Cours inconnu');
         }
 
-        // En post, via le delete form (Ne pas oublier de repasser en methods: ['POST'])
-        // if ($this->isCsrfTokenValid('delete'.$course->getId(), $request->getPayload()->getString('_token'))) {
-
-        // En get, via le lien de suppression
-        if ($this->isCsrfTokenValid('delete' . $course->getId(), $request->get('_token'))) {
-            // dump($course); // before remove
+        // Vérification du token CSRF via formulaire POST
+        if ($this->isCsrfTokenValid('delete' . $course->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($course);
-            // dump($course); // after remove
             $entityManager->flush();
-            // dump($course); // after flush
 
             $this->addFlash('info', 'Le cours a été supprimé avec succès');
         } else {
