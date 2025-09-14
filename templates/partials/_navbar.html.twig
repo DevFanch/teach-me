@@ -1,30 +1,40 @@
 <nav class="bg-blue-600 text-white shadow-md">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="flex justify-between h-16">
-			<div class="flex items-center">
-				<a class="text-xl font-bold" href="{{ path('app_main') }}">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex items-center">
+        <a class="text-xl font-bold" href="{{ path('app_main') }}">
+          <img
+            src="{{ asset('img/hell-icon.png') }}"
+            alt="Hell Demo"
+            class="w-10 h-10 bg-white rounded-full"
+          />
+        </a>
+      </div>
 
-					<img src="{{ asset('img/hell-icon.png') }}" alt="Hell Demo" class="w-10 h-10 bg-white rounded-full">
-				</a>
-			</div>
-
-			<!-- Menu de navigation -->
-			<div class="hidden sm:flex sm:items-center" id="navbarSupportedContent">
-				<div class="ml-10 flex items-center space-x-4">
-					{% if app.user %}
-						<a href="{{ path('app_course_index') }}" class="nav-link">Cours</a>
-						{% if is_granted("ROLE_ADMIN") %}
-							<a href="{{ path('app_category_index') }}" class="nav-link">Catégories</a>
-							<a href="{{ path('app_trainer_index') }}" class="nav-link">Formateurs</a>
-							<a class="nav-link" href="{{ path('admin_dashboard_index') }}">Dashboard</a>
-						{% endif %}
-						<a href="{{ path('app_logout') }}" class="nav-link">Déconnexion</a>
-					{% else %}
-						<a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
-						<a href="{{ path('app_register') }}" class="nav-link">Inscription</a>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-	</div>
+      <!-- Menu de navigation -->
+      <div class="hidden sm:flex sm:items-center" id="navbarSupportedContent">
+        <div class="ml-10 flex items-center space-x-4">
+          {% if app.user %}
+          <a href="{{ path('app_course_index') }}" class="nav-link">Cours</a>
+          {% if is_granted("ROLE_ADMIN") %}
+          <a href="{{ path('app_category_index') }}" class="nav-link"
+            >Catégories</a
+          >
+          <a href="{{ path('app_trainer_index') }}" class="nav-link"
+            >Formateurs</a
+          >
+          <a class="nav-link" href="{{ path('admin_index') }}">Dashboard</a>
+          <a class="nav-link" href="{{ path('admin_course_status') }}"
+            >Gestion des cours</a
+          >
+          {% endif %}
+          <a href="{{ path('app_logout') }}" class="nav-link">Déconnexion</a>
+          {% else %}
+          <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+          <a href="{{ path('app_register') }}" class="nav-link">Inscription</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 </nav>

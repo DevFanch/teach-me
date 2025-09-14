@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %} {% block title %}Course Status{% endblock %} {%
+block body %}
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-2xl font-semibold mb-4">
+    Course status (updated by app:course:update-status)
+  </h1>
+
+  <div id="course-status" class="bg-white shadow rounded p-4">
+    <div class="flex items-center justify-between mb-3">
+      <div class="text-sm text-gray-600">Last update</div>
+      <div id="last_update" class="text-sm font-mono text-gray-800">-</div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-3">
+      <div class="p-3 bg-gray-50 rounded">
+        <div class="text-xs text-gray-500">Execution count</div>
+        <div id="count" class="text-xl font-bold">-</div>
+      </div>
+      <div class="p-3 bg-gray-50 rounded">
+        <div class="text-xs text-gray-500">Status</div>
+        <div id="status" class="text-xl font-bold">-</div>
+      </div>
+      <div class="p-3 bg-gray-50 rounded">
+        <div class="text-xs text-gray-500">Message</div>
+        <div id="message" class="text-sm">-</div>
+      </div>
+    </div>
+
+    <div class="text-xs text-gray-400">
+      Last fetched: <span id="fetched_at">-</span>
+    </div>
+  </div>
+
+  <p class="mt-4 text-sm text-gray-500">
+    This panel polls <code>/json/courses.json</code> every 20s and updates
+    automatically.
+  </p>
+
+  <script type="module">
+    import "/assets/course-status.js";
+  </script>
+</div>
+{% endblock %}
