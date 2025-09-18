@@ -23,6 +23,9 @@ security:
             remember_me:
                 secret:   '%kernel.secret%' # required
                 lifetime: 604800 # 1 week in seconds
+                path: /
+                token_provider:
+                    doctrine: true
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -36,8 +39,8 @@ security:
 
     # Easy way to control access for large sections of your site
     role_hierarchy:
-        ROLE_PLANNER: ROLE_USER
         ROLE_ADMIN: ROLE_PLANNER
+        ROLE_PLANNER: ROLE_USER
 
     # https://symfony.com/doc/current/security/access_control.html
     # Note: Only the *first* access control that matches will be used

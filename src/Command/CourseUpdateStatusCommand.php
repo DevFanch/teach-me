@@ -25,15 +25,7 @@ class CourseUpdateStatusCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // With cron, we have to install cron-expression
-        // composer require dragonmantank/cron-expression
-        // After insert Attribut : debug to see it
-        // symfony console debug:scheduler
-
-
-
         $io = new SymfonyStyle($input, $output);
-
         dump('Scheduler exec '. date('H:i:s d-m-Y'));
         
         // Update Json file to log actions about course status
